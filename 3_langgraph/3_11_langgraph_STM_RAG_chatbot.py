@@ -66,6 +66,9 @@ from chromadb.config import Settings
 
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv(override=True)
 
@@ -74,8 +77,8 @@ llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.1)
 MAX_STM_ENTRIES = 500
 VECTOR_DISTANCE_THRESHOLD = 0.7
 
-CSV_PATH = "c://code//agenticai//3_langgraph//Dataset_banking_chatbot.csv"
-PERSIST_DIR = "c://code//agenticai//3_langgraph//banking_chromadb"
+CSV_PATH = os.path.join(BASE_DIR, "Dataset_banking_chatbot.csv")
+PERSIST_DIR = os.path.join(BASE_DIR, "banking_chromadb")
 COLLECTION_NAME = "chroma_bank_faq"
 
 class ShortTermMemory:

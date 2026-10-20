@@ -7,6 +7,9 @@ import pandas as pd
 from crewai import Agent, Task, Crew, Process
 from crewai.tools import tool
 from dotenv import load_dotenv
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv(override=True)
 
@@ -14,7 +17,7 @@ load_dotenv(override=True)
 def get_gcp_billing_data(query_type: str) -> str:
     """Get GCP billing data based on agent's specific query"""
     try:
-        df = pd.read_csv('c://code//agenticai//4_crewai//gcp_billing.csv')
+        df = pd.read_csv(os.path.join(BASE_DIR, "gcp_billing.csv"))
         
         # Return ACTUAL data summary
         summary = f"REAL DATA - {len(df)} records, Total cost: ₹{df['Total Cost (INR)'].sum():,.0f}\n"
@@ -31,7 +34,7 @@ def get_gcp_billing_data(query_type: str) -> str:
 def query_resource_metrics(service_filter: str, threshold: int) -> str:
     """Query specific resource metrics with REAL resource details"""
     try:
-        df = pd.read_csv('c://code//agenticai//4_crewai//gcp_billing.csv')
+        df = pd.read_csv(os.path.join(BASE_DIR, "gcp_billing.csv"))
         
         if 'compute' in service_filter.lower():
             filtered = df[df['Service Name'].str.contains('Compute|VM|Instance', case=False, na=False)]

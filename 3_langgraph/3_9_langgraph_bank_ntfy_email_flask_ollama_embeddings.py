@@ -17,6 +17,8 @@ from langchain_community.vectorstores import Chroma
 from langchain_ollama import OllamaEmbeddings
 from langchain_openai import ChatOpenAI
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # -------------------------------
 # Setup
 # -------------------------------
@@ -31,7 +33,7 @@ class ChatState(TypedDict):
 # -------------------------------
 # Data / Vector DB
 # -------------------------------
-data_path = r"c:\code\agenticai\3_langgraph\Dataset_banking_chatbot.csv"
+data_path = os.path.join(BASE_DIR, "Dataset_banking_chatbot.csv")
 df = pd.read_csv(data_path, encoding="latin-1")
 
 texts = df["Query"].astype(str).tolist()
@@ -50,7 +52,7 @@ llm = ChatOpenAI(
 # vectors are a different size than all-MiniLM-L6-v2's, so they can't share a
 # collection.
 vectordb = Chroma(
-    persist_directory=r"c:\code\agenticai\3_langgraph\banking_chromadb_ollama",
+    persist_directory=os.path.join(BASE_DIR, "banking_chromadb_ollama"),
     embedding_function=embeddings,
     collection_name="banking_faqs_ollama"
 )

@@ -2,8 +2,11 @@
 # Add our knowledge base to the collection
 # Query the collection using semantic search
 import chromadb
+import os
 
-client = chromadb.PersistentClient(path=r"c:/code/agenticai/9_general/rag/chromadb")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+client = chromadb.PersistentClient(path=os.path.join(BASE_DIR, "chromadb"))
 
 collection = client.get_or_create_collection(name="my_collection")
 

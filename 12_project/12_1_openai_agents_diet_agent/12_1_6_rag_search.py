@@ -2,6 +2,9 @@ import asyncio
 import chromadb
 from dotenv import load_dotenv
 from agents import Agent, Runner, function_tool, trace
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv()
 
@@ -9,7 +12,7 @@ load_dotenv()
 # Get the collection
 # -------------------------------
 chroma_client = chromadb.PersistentClient(
-    r"C:\code\agenticai\12_project\12_1_openai_agents_diet_agent\data\chroma"
+    os.path.join(BASE_DIR, "data", "chroma")
 )
 nutrition_db = chroma_client.get_collection(name="nutrition_db")
 

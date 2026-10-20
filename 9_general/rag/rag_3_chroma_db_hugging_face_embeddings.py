@@ -1,9 +1,12 @@
 # pip install chromadb sentence-transformers
 import chromadb
 from chromadb.utils import embedding_functions
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Initialize Chroma with persistence
-client = chromadb.PersistentClient(path=r"c:/code/agenticai/9_general/rag/chromadb")
+client = chromadb.PersistentClient(path=os.path.join(BASE_DIR, "chromadb"))
 
 # Hugging Face embedding function
 # These are higher quality embeddings

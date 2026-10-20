@@ -1,7 +1,10 @@
 import sqlite3
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Define the path to the database file
-DB_PATH = "c://code//agenticai//2_openai_agents//faqs.db"
+DB_PATH = os.path.join(BASE_DIR, "faqs.db")
 
 # Connect to SQLite (creates the file if it doesn't exist)
 conn = sqlite3.connect(DB_PATH)

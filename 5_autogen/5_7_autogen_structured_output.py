@@ -8,6 +8,9 @@ from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_agentchat.agents import AssistantAgent
 from autogen_agentchat.messages import StructuredMessage
 from dotenv import load_dotenv
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Define structured output model
 class JobInfo(BaseModel):
@@ -16,7 +19,7 @@ class JobInfo(BaseModel):
     location: Optional[str] = None
 
 # Load data and pick sample rows
-df = pd.read_csv(r"c:\code\agenticai\5_autogen\clean_jobs.csv")
+df = pd.read_csv(os.path.join(BASE_DIR, "clean_jobs.csv"))
 descriptions = df.loc[[4, 104, 204, 304, 404], "description"].tolist()
 
 # Setup model client

@@ -2,6 +2,9 @@ import asyncio
 import json
 from dotenv import load_dotenv
 from agents import Agent, Runner
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv(override=True)
 
@@ -220,7 +223,7 @@ Worker evidence:
 # MAIN LOOP
 # --------------------------------
 async def main():
-    with open(r"c:\code\agenticai\2_openai_agents\students.json", "r") as f:
+    with open(os.path.join(BASE_DIR, "students.json"), "r") as f:
         students = json.load(f)
 
     for student in students:

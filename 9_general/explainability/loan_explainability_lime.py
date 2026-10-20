@@ -4,12 +4,15 @@ import pandas as pd
 import joblib
 from lime.lime_tabular import LimeTabularExplainer
 from sklearn.pipeline import Pipeline
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ----------------------------------------------------
 # CONFIG
 # ----------------------------------------------------
-PIPE_PATH = r"c:/code/agenticai/9_general/explainability/preproc_pipeline.joblib"
-DATA_PATH = r"c:/code/agenticai/9_general/explainability/loan_approval.csv"
+PIPE_PATH = os.path.join(BASE_DIR, "preproc_pipeline.joblib")
+DATA_PATH = os.path.join(BASE_DIR, "loan_approval.csv")
 
 NUMERIC_FEATURES = ["income", "credit_score", "loan_amount", "years_employed", "points"]
 

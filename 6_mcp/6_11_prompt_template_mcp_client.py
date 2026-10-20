@@ -3,6 +3,9 @@ from dotenv import load_dotenv
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from openai import OpenAI
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv(override=True)
 
@@ -44,7 +47,7 @@ async def answer_customer_question(session: ClientSession, product_name: str, cu
 async def main():
     server_params = StdioServerParameters(
         command="python",
-        args=["c:/code/agenticai/6_mcp/6_11_prompt_template_mcp_server.py"],
+        args=[os.path.join(BASE_DIR, "6_11_prompt_template_mcp_server.py")],
     )
 
     async with stdio_client(server_params) as (read, write):

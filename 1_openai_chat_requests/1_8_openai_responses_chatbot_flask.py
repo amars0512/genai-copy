@@ -4,6 +4,9 @@ from flask import Flask, request, render_template_string
 from openai import OpenAI
 from dotenv import load_dotenv
 from pypdf import PdfReader
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv(override=True)
 
@@ -12,7 +15,7 @@ app = Flask(__name__)
 client = OpenAI()
 
 # --- Step 1: Read Buffett PDF into a single string ---
-reader = PdfReader(r"C:\code\agenticai\1_openai_chat_requests\Warren_Buffett.pdf")
+reader = PdfReader(os.path.join(BASE_DIR, "Warren_Buffett.pdf"))
 buffett = ""
 for page in reader.pages:
     text = page.extract_text()

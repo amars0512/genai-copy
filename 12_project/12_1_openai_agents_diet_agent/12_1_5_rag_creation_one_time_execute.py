@@ -2,6 +2,9 @@
 from typing import Dict
 import chromadb
 import pandas as pd
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 def prepare_nutrition_documents(csv_path: str) -> Dict:
@@ -49,7 +52,7 @@ This is a {row['FoodCategory'].lower()} food item that provides {cals} calories 
 
 def setup_nutrition_chromadb(csv_path: str, collection_name: str = "nutrition_db"):
     client = chromadb.PersistentClient(
-        path=r"C:\code\agenticai\12_project\12_1_openai_agents_diet_agent\data\chroma"
+        path=os.path.join(BASE_DIR, "data", "chroma")
     )
 
     try:
@@ -76,13 +79,13 @@ def setup_nutrition_chromadb(csv_path: str, collection_name: str = "nutrition_db
 
 # ---- BUILD DB ----
 collection = setup_nutrition_chromadb(
-    r"C:\code\agenticai\12_project\12_1_openai_agents_diet_agent\data\calories.csv",
+    os.path.join(BASE_DIR, "data", "calories.csv"),
     "nutrition_db",
 )
 
 # ---- QUERY DB ----
 chroma_client = chromadb.PersistentClient(
-    path=r"C:\code\agenticai\12_project\12_1_openai_agents_diet_agent\data\chroma"
+    path=os.path.join(BASE_DIR, "data", "chroma")
 )
 
 nutrition_db = chroma_client.get_collection(name="nutrition_db")

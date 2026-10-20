@@ -1,6 +1,9 @@
 from openai import OpenAI
 from dotenv import load_dotenv
 from pypdf import PdfReader
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # -----------------------------
 # 1. Setup and load knowledge base
@@ -8,7 +11,7 @@ from pypdf import PdfReader
 load_dotenv(override=True)
 client = OpenAI()
 
-reader = PdfReader("C://code//agenticai//1_openai_chat_requests//Warren_Buffett.pdf")
+reader = PdfReader(os.path.join(BASE_DIR, "Warren_Buffett.pdf"))
 buffett_text = "".join(
     page.extract_text() or "" for page in reader.pages
 )

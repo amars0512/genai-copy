@@ -5,6 +5,9 @@ from chromadb.utils import embedding_functions
 from pathlib import Path
 import chromadb
 from chromadb.config import Settings
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # --------------------------------------------------
 # 1. Load environment & OpenAI client
@@ -15,7 +18,7 @@ client = OpenAI()
 # --------------------------------------------------
 # 2. Read FAQ file
 # --------------------------------------------------
-FAQ_PATH = r"c:\code\agenticai\2_openai_agents\faq.txt"
+FAQ_PATH = os.path.join(BASE_DIR, "faq.txt")
 faq_text = Path(FAQ_PATH).read_text(encoding="utf-8")
 
 # --------------------------------------------------
@@ -30,7 +33,7 @@ openai_ef = embedding_functions.OpenAIEmbeddingFunction(
 # 4. Create / Load ChromaDB (LOCAL storage)
 # --------------------------------------------------
 chroma_client = chromadb.PersistentClient(
-    path=r"c:/code/agenticai/2_openai_agents/chroma_faq_db"
+    path=os.path.join(BASE_DIR, "chroma_faq_db")
 )
 
 collection = chroma_client.get_or_create_collection(

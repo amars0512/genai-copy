@@ -17,12 +17,14 @@ from langchain_chroma import Chroma
 from crewai import Agent, Task, Crew
 from crewai.tools import tool
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 load_dotenv(override=True)
 
 app = Flask(__name__)
 
-CSV_PATH = r"C:\code\agenticai\4_crewai\ticket_helpdesk_labeled_multi_languages_english_spain_french_german.csv"
-CHROMA_DIR = r"C:\code\agenticai\4_crewai\helpdesk_chroma"
+CSV_PATH = os.path.join(BASE_DIR, "ticket_helpdesk_labeled_multi_languages_english_spain_french_german.csv")
+CHROMA_DIR = os.path.join(BASE_DIR, "helpdesk_chroma")
 
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
 NTFY_TOPIC = os.getenv("NTFY_URGENT_TICKETS_TOPIC") # atulkahate_urgent_tickets

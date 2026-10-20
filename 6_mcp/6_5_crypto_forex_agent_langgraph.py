@@ -5,6 +5,9 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from langgraph.graph import StateGraph, END
 from typing import TypedDict
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv(override=True)
 
@@ -67,13 +70,13 @@ async def main():
     # Initialize Crypto MCP connection
     crypto_params = StdioServerParameters(
         command="python", 
-        args=["c:/code/agenticai/6_mcp/6_3_crypto_mcp_server.py"]
+        args=[os.path.join(BASE_DIR, "6_3_crypto_mcp_server.py")]
     )
     
     # Initialize Exchange Rate MCP connection
     exchange_params = StdioServerParameters(
         command="python",
-        args=["c:/code/agenticai/6_mcp/6_5_forex_mcp_server.py"]
+        args=[os.path.join(BASE_DIR, "6_5_forex_mcp_server.py")]
     )
     
     async with stdio_client(crypto_params) as (crypto_read, crypto_write):

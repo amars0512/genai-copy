@@ -3,6 +3,9 @@
 from datasets import load_dataset
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Original dataset: https://huggingface.co/datasets/budecosystem/guardrail-training-data
 # Load dataset
@@ -20,7 +23,7 @@ TARGET_CATEGORIES = {
 }
 
 MAX_PER_CATEGORY = 1000  # keep small for practice
-CHROMA_PATH = r"C:\code\agenticai\3_langgraph\guardrail_chromadb"
+CHROMA_PATH = os.path.join(BASE_DIR, "guardrail_chromadb")
 
 collected = {cat: 0 for cat in TARGET_CATEGORIES}
 texts = []

@@ -2,13 +2,16 @@ import boto3
 import json
 import base64
 import numpy as np
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 client = boto3.client(service_name='bedrock-runtime', region_name="us-west-2")
 
 images = [
-    r'c:\code\agenticai\8_bedrock\images\alex.jpg',
-    r'c:\code\agenticai\8_bedrock\images\hinton_train.jpg',
-    r'c:\code\agenticai\8_bedrock\images\ilya.png',
+    os.path.join(BASE_DIR, "images", "alex.jpg"),
+    os.path.join(BASE_DIR, "images", "hinton_train.jpg"),
+    os.path.join(BASE_DIR, "images", "ilya.png"),
 ]
 
 # ---------------------------------------------
@@ -50,7 +53,7 @@ for image in images:
 # -------------------------------
 # Get embedding for test image
 # -------------------------------
-test_image = r'c:\code\agenticai\8_bedrock\images\hinton_test.jpg'
+test_image = os.path.join(BASE_DIR, "images", "hinton_test.jpg")
 test_image_embedding = getImagesEmbedding(test_image)
 
 # ------------------------

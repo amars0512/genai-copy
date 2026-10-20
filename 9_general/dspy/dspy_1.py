@@ -1,6 +1,8 @@
 import dspy
 import os
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # --------------------------------
 # CONFIGURE OLLAMA ENDPOINT
 # --------------------------------
@@ -79,6 +81,6 @@ pred = optimized_predictor(test_symbol)
 print("\nPrediction for", test_symbol, ":", pred.direction)
 
 # Save the optimized predictor
-optimized_predictor.save(r"c:\code\agenticai\9_general\dspy\stock_predictor.json")
+optimized_predictor.save(os.path.join(BASE_DIR, "stock_predictor.json"))
 print("\nSaved optimized predictor to 'stock_predictor.json'")
 print("   Open this file to see the exact prompts and demos!")

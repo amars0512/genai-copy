@@ -72,6 +72,9 @@ from chromadb.config import Settings
 
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv(override=True)
 
@@ -80,12 +83,12 @@ llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.1)
 MAX_STM_ENTRIES = 500
 VECTOR_DISTANCE_THRESHOLD = 0.7
 
-CSV_PATH = "c://code//agenticai//3_langgraph//Dataset_banking_chatbot.csv"
+CSV_PATH = os.path.join(BASE_DIR, "Dataset_banking_chatbot.csv")
 # Separate persist directory/collection from the HuggingFace version - Chroma
 # collections are tied to one embedding dimensionality, and nomic-embed-text's
 # vectors are a different size than all-mpnet-base-v2's, so they can't share
 # a collection.
-PERSIST_DIR = "c://code//agenticai//3_langgraph//banking_chromadb_ollama"
+PERSIST_DIR = os.path.join(BASE_DIR, "banking_chromadb_ollama")
 COLLECTION_NAME = "chroma_bank_faq_ollama"
 
 class ShortTermMemory:

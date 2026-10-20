@@ -7,6 +7,8 @@ import os, requests
 from langgraph.graph import StateGraph, START, END
 from typing import TypedDict
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # --------------------------
 # Shared State
 # --------------------------
@@ -176,7 +178,7 @@ print("Generating graph image...")
 
 graph = app.get_graph()
 
-graph_path = r"c:\code\agenticai\3_langgraph\news_agent_graph.png"
+graph_path = os.path.join(BASE_DIR, "news_agent_graph.png")
 
 graph.draw_mermaid_png(output_file_path=graph_path)
 

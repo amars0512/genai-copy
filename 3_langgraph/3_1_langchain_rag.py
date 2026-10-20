@@ -9,9 +9,11 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from dotenv import load_dotenv
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 load_dotenv(override=True)
 
-persist_directory = r"C:\code\agenticai\3_langgraph\chroma_db"
+persist_directory = os.path.join(BASE_DIR, "chroma_db")
 embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
 if os.path.exists(persist_directory) and os.listdir(persist_directory):

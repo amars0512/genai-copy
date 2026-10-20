@@ -4,6 +4,9 @@ import re
 from pathlib import Path
 from dotenv import load_dotenv
 from agents import Agent, Runner
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv(override=True)
 
@@ -188,8 +191,8 @@ Role: Agentic AI Developer/Architect
 # MAIN LOOP
 # --------------------------------
 async def main():
-    input_file = Path(r"c:\code\agenticai\2_openai_agents\candidates.json")
-    output_file = Path(r"c:\code\agenticai\2_openai_agents\candidate_decisions.json")
+    input_file = Path(os.path.join(BASE_DIR, "candidates.json"))
+    output_file = Path(os.path.join(BASE_DIR, "candidate_decisions.json"))
 
     with input_file.open("r", encoding="utf-8") as f:
         candidates = json.load(f)

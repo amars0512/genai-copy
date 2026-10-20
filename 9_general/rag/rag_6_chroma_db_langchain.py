@@ -5,6 +5,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import SystemMessage, HumanMessage
 import os
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # --------------------------------
 # CONFIGURE OLLAMA ENDPOINT
 # --------------------------------
@@ -13,7 +15,7 @@ os.environ["OLLAMA_HOST"] = "http://localhost:11434"
 # --------------------------------
 # INITIALIZE CHROMADB
 # --------------------------------
-client = chromadb.PersistentClient(path=r"c:/code/agenticai/9_general/rag/chromadb")
+client = chromadb.PersistentClient(path=os.path.join(BASE_DIR, "chromadb"))
 
 # Hugging Face embedding function
 embedding_fn = embedding_functions.SentenceTransformerEmbeddingFunction(

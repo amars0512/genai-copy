@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -28,7 +30,7 @@ embeddings = HuggingFaceEmbeddings(
 # ------------------------------------------------------------
 # Guardrail Vector DB
 # ------------------------------------------------------------
-GUARDRAIL_DB_PATH = r"C:\code\agenticai\3_langgraph\guardrail_chromadb"
+GUARDRAIL_DB_PATH = os.path.join(BASE_DIR, "guardrail_chromadb")
 
 guardrail_db = Chroma(
     persist_directory=GUARDRAIL_DB_PATH,
@@ -38,7 +40,7 @@ guardrail_db = Chroma(
 # ------------------------------------------------------------
 # Banking Vector DB
 # ------------------------------------------------------------
-BANKING_DB_PATH = r"C:\code\agenticai\3_langgraph\banking_chromadb"
+BANKING_DB_PATH = os.path.join(BASE_DIR, "banking_chromadb")
 
 banking_db = Chroma(
     persist_directory=BANKING_DB_PATH,

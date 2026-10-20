@@ -7,11 +7,14 @@ from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_agentchat.messages import MultiModalMessage, TextMessage
 from autogen_core import Image as AGImage
 from autogen_agentchat.agents import AssistantAgent
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv(override=True)
 
 # Load image into Autogen's image type
-img = AGImage(Image.open("c://code//agenticai//5_autogen//1911_Solvay_conference.jpg"))
+img = AGImage(Image.open(os.path.join(BASE_DIR, "1911_Solvay_conference.jpg")))
 
 # Define agents with OpenAI model clients
 desc_agent = AssistantAgent("desc_agent", OpenAIChatCompletionClient(model="gpt-4o"))

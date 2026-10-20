@@ -8,6 +8,9 @@ from typing import TypedDict
 import pandas as pd
 import chromadb
 from chromadb.config import Settings
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__)
 
@@ -23,7 +26,7 @@ class ChatState(TypedDict):
 # Load dataset
 # --------------------------
 
-csv_path = r"c:\code\agenticai\3_langgraph\Dataset_banking_chatbot.csv"
+csv_path = os.path.join(BASE_DIR, "Dataset_banking_chatbot.csv")
 
 df = pd.read_csv(csv_path, encoding="latin-1")
 
@@ -42,7 +45,7 @@ embeddings = HuggingFaceEmbeddings(
 # Chroma
 # --------------------------
 
-persist_dir = r"c:\code\agenticai\3_langgraph\banking_chromadb"
+persist_dir = os.path.join(BASE_DIR, "banking_chromadb")
 collection_name = "banking_faqs_poisoned"
 
 client = chromadb.PersistentClient(

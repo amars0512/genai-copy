@@ -1,7 +1,10 @@
 import random
 import chromadb
+import os
 
-DB_PATH = r"C:\code\agenticai\12_project\12_1_openai_agents_diet_agent\data\chroma"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+DB_PATH = os.path.join(BASE_DIR, "data", "chroma")
 
 
 def setup_chromadb(file_path, collection_name="nutrition_qna", sample_pct=0.05):
@@ -42,7 +45,7 @@ def setup_chromadb(file_path, collection_name="nutrition_qna", sample_pct=0.05):
 # Usage example
 if __name__ == "__main__":
     # Setup (run once)
-    setup_chromadb(r"C:\code\agenticai\12_project\12_1_openai_agents_diet_agent\data\questions_output.txt")
+    setup_chromadb(os.path.join(BASE_DIR, "data", "questions_output.txt"))
     
     # Query
     client = chromadb.PersistentClient(DB_PATH)

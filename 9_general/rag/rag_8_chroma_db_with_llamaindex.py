@@ -8,6 +8,9 @@ from llama_index.llms.openai import OpenAI
 from llama_index.vector_stores.chroma import ChromaVectorStore
 import chromadb
 from dotenv import load_dotenv
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv(override=True)
 
@@ -23,7 +26,7 @@ Settings.llm = OpenAI(
 # Create / connect ChromaDB (PERSISTENT)
 # -------------------------------
 chroma_client = chromadb.PersistentClient(
-    path=r"C:\code\agenticai\9_general\rag\chromadb"
+    path=os.path.join(BASE_DIR, "chromadb")
 )
 
 collection = chroma_client.get_or_create_collection(
@@ -42,7 +45,7 @@ vector_store = ChromaVectorStore(
 # -------------------------------
 documents = SimpleDirectoryReader(
     input_files=[
-        r"C:\code\agenticai\3_langgraph\darwin\Origin-of-Species.txt"
+        os.path.join(BASE_DIR, "..", "..", "3_langgraph", "darwin", "Origin-of-Species.txt")
     ]
 ).load_data()
 

@@ -2,6 +2,9 @@
 
 from langchain_core.runnables import RunnableLambda
 import graphviz
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # --- Node 1: Ask for user's name ---
 # Every function must receive one argument, even if it does not use it
@@ -35,7 +38,7 @@ if __name__ == "__main__":
     dot.node("B", "Greet User")
     dot.edge("A", "B")
 
-'''    graph_path = "c://code//agenticai//greeting_lcel_graph.png"
+'''    graph_path = os.path.join(BASE_DIR, "greeting_lcel_graph.png")
     dot.render(graph_path, format="png", cleanup=True)
     print(f"Graph image saved at: {graph_path}")
 '''

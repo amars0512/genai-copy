@@ -6,6 +6,9 @@ import asyncio
 from agents import Agent, Runner, function_tool
 import chromadb
 from chromadb.utils import embedding_functions
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv(override=True)
 
@@ -16,7 +19,7 @@ client = OpenAI()
 # ----------------------------------------------------
 
 chroma_client = chromadb.PersistentClient(
-    path=r"c:/code/agenticai/2_openai_agents/rag/chromadb"
+    path=os.path.join(BASE_DIR, "rag", "chromadb")
 )
 
 embedding_fn = embedding_functions.SentenceTransformerEmbeddingFunction(

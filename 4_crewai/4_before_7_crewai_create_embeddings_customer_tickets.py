@@ -7,6 +7,8 @@ from langchain_text_splitters import CharacterTextSplitter
 import os
 import shutil
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 def create_and_save_embeddings():
     """
     Read customer_tickets.csv, create embeddings from 'body',
@@ -15,7 +17,7 @@ def create_and_save_embeddings():
     
     print("Reading customer_tickets.csv...")
     try:
-        df = pd.read_csv('c://code//agenticai//4_crewai//customer_tickets.csv')
+        df = pd.read_csv(os.path.join(BASE_DIR, "customer_tickets.csv"))
         print(f"Loaded {len(df)} tickets from CSV")
         
         # Clean column names
@@ -78,7 +80,7 @@ def create_and_save_embeddings():
     )
     
     # Clear old database
-    persist_dir = "c://code//agenticai//4_crewai//customer_support_chroma"
+    persist_dir = os.path.join(BASE_DIR, "customer_support_chroma")
     if os.path.exists(persist_dir):
         print("Clearing previous Chroma database...")
         shutil.rmtree(persist_dir)
@@ -103,7 +105,7 @@ def load_embeddings_example():
     print("TESTING: Loading saved embeddings")
     print("="*70)
     
-    persist_dir = "c://code//agenticai//4_crewai//customer_support_chroma"
+    persist_dir = os.path.join(BASE_DIR, "customer_support_chroma")
     
     try:
         embeddings = HuggingFaceEmbeddings(

@@ -1,0 +1,224 @@
+{
+  "name": "17-news-MCP-client-server",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi! Ask me for the latest news on any topic, e.g. 'latest news on electric cars'.",
+        "options": {
+          "title": "News Assistant",
+          "subtitle": "MCP client + MCP server (NewsAPI) in one workflow"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "224f9846-d263-45ae-bc17-2453af427389",
+      "name": "When chat message received",
+      "webhookId": "5b0f3a1e-9d7c-4c1e-8a4b-16ae0e5e7a01"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a news assistant.\n\nYou have ONE tool, from the news MCP server: mcp_get_latest_news(topic).\nCall it with that EXACT name whenever the user asks about news, headlines or what is happening with a topic.\nUse a short topic in English (e.g. \"India cricket\", \"electric cars\", \"OpenAI\").\n\nAnswer with up to 5 headlines as a numbered list: **title** - source, date (YYYY-MM-DD), then one short sentence from the description.\nOnly use what the tool returned; never invent headlines. If it returns no articles, say so.\nIf the request is not about news, reply exactly: \"Sorry, I can only help with news. Try: latest news on electric cars.\"\n",
+          "maxIterations": 5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "398fdecc-b0bc-412b-a7c0-7555524f6a71",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "qwen3:8b",
+        "options": {
+          "temperature": 0.1,
+          "numCtx": 8192,
+          "numPredict": 1024,
+          "think": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        120,
+        220
+      ],
+      "id": "da5f1b47-ca54-45c4-ab6a-eb8af48cf450",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "axE1MU3h3dvSrZWi",
+          "name": "Ollama account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 5
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        260,
+        220
+      ],
+      "id": "414121f4-d33c-45d6-8362-1deb80f6476c",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://localhost:5678/mcp/news-mcp",
+        "serverTransport": "httpStreamable",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.4,
+      "position": [
+        400,
+        220
+      ],
+      "id": "aa75d1bd-4587-4d0d-96ae-bbf222b22e86",
+      "name": "mcp"
+    },
+    {
+      "parameters": {
+        "path": "news-mcp"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2.1,
+      "position": [
+        760,
+        0
+      ],
+      "id": "208cbcbf-0bc7-41ed-a383-33013429204f",
+      "name": "MCP Server Trigger",
+      "webhookId": "9c2d6f4b-1e3a-4f7d-b0c5-16ae0e5e7a02"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Get the 5 most recent English news articles about a topic. Input: a short topic, e.g. 'electric cars'.",
+        "url": "https://newsapi.org/v2/everything",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $fromAI('topic', `Short news topic, e.g. electric cars`, 'string') }}"
+            },
+            {
+              "name": "searchIn",
+              "value": "title"
+            },
+            {
+              "name": "sortBy",
+              "value": "publishedAt"
+            },
+            {
+              "name": "language",
+              "value": "en"
+            },
+            {
+              "name": "pageSize",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {},
+        "optimizeResponse": true,
+        "dataField": "articles",
+        "fieldsToInclude": "selected",
+        "fields": "title,description,source.name,publishedAt,url"
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        760,
+        220
+      ],
+      "id": "518bac10-8d0e-4ea4-a86b-a9926b835502",
+      "name": "get_latest_news",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "newsApiHeader16",
+          "name": "NewsAPI key"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mcp": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_latest_news": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e55047c7-a8eb-4688-b63a-a5c1a9f1069e",
+  "id": "newsMcpDemo16",
+  "tags": []
+}

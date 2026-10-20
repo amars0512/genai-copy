@@ -7,6 +7,8 @@ from langchain_huggingface import HuggingFaceEmbeddings
 import os
 from dotenv import load_dotenv
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -21,7 +23,7 @@ embeddings = HuggingFaceEmbeddings(
 # ------------------------------------------------------------
 # Guardrail Vector DB
 # ------------------------------------------------------------
-GUARDRAIL_DB_PATH = r"C:\code\agenticai\3_langgraph\guardrail_chromadb"
+GUARDRAIL_DB_PATH = os.path.join(BASE_DIR, "guardrail_chromadb")
 
 guardrail_db = Chroma(
     persist_directory=GUARDRAIL_DB_PATH,

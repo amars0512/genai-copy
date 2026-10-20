@@ -1,6 +1,9 @@
 from agents import Agent, Runner, function_tool
 import sqlite3
 from dotenv import load_dotenv
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv(override=True)
 
@@ -8,7 +11,7 @@ load_dotenv(override=True)
 def run_sql(query: str) -> str:
     """Execute a read-only SQL query on the sales database."""
     
-    conn = sqlite3.connect(r"c:\code\agenticai\14_advanced\03_llm_examples\sales.db")
+    conn = sqlite3.connect(os.path.join(BASE_DIR, "sales.db"))
     cursor = conn.cursor()
 
     cursor.execute(query)

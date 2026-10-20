@@ -10,12 +10,14 @@ from agents import Agent, Runner, function_tool
 import chromadb
 from chromadb.utils import embedding_functions
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 load_dotenv(override=True)
 
 app = Flask(__name__)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-PDF_PATH = r"c:\code\agenticai\2_openai_agents\Introduction_to_Insurance.pdf"
+PDF_PATH = os.path.join(BASE_DIR, "Introduction_to_Insurance.pdf")
 
 reader = PdfReader(PDF_PATH)
 pdf_text = "".join(page.extract_text() or "" for page in reader.pages)
@@ -26,7 +28,7 @@ def split_text(text, chunk_size=500):
 pdf_chunks = split_text(pdf_text)
 
 chroma_client = chromadb.PersistentClient(
-    path=r"c:\code\agenticai\2_openai_agents\rag\chroma_pdf"
+    path=os.path.join(BASE_DIR, "rag", "chroma_pdf")
 )
 
 embedding_fn = embedding_functions.SentenceTransformerEmbeddingFunction(

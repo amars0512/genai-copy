@@ -1,0 +1,164 @@
+{
+  "name": "16-mock-temperature-MCP",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi! Ask me the temperature in any city, e.g. 'How hot is it in Mumbai?'",
+        "options": {
+          "title": "Temperature Bot",
+          "subtitle": "Simplest MCP client + server demo"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2cfa94a6-fba2-4aec-b96a-d3d452e47d83",
+      "name": "When chat message received",
+      "webhookId": "7e1c4d2a-3b5f-4a6e-9c8d-17ae0e5e7a01"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a weather assistant that tells people the temperature of a city.\n- If the user mentions a city, call the tool mcp_get_temperature(city) (use this EXACT name) and answer in one short sentence.\n- If the user asks about weather or temperature without naming a city, ask: \"Which city?\"\n- Never guess a temperature yourself.\n- For anything else, say you can only tell the temperature of a city.\n",
+          "maxIterations": 5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "c1984a90-3e9b-4ad5-b3be-19cb117c3672",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "qwen3:8b",
+        "options": {
+          "temperature": 0.1,
+          "numPredict": 512,
+          "think": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        160,
+        220
+      ],
+      "id": "5d0b04ba-9ae1-4ca3-a9d0-757cac500421",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "axE1MU3h3dvSrZWi",
+          "name": "Ollama account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://localhost:5678/mcp/weather-mcp",
+        "serverTransport": "httpStreamable",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.4,
+      "position": [
+        340,
+        220
+      ],
+      "id": "7806c612-a4ab-4603-8310-02a460989c0d",
+      "name": "mcp"
+    },
+    {
+      "parameters": {
+        "path": "weather-mcp"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2.1,
+      "position": [
+        700,
+        0
+      ],
+      "id": "80b039db-06fc-4339-bad8-fd194986e2f8",
+      "name": "MCP Server Trigger",
+      "webhookId": "a4f2b6c8-5d1e-4b3a-8f7c-17ae0e5e7a02"
+    },
+    {
+      "parameters": {
+        "description": "Get the current temperature (in Celsius) for a city.",
+        "jsCode": "// Mock weather service: no API call, just a local function.\n// Known cities get a fixed temperature; any other city gets a stable made-up one.\nconst MOCK = { mumbai: 31, delhi: 27, pune: 26, bengaluru: 24, chennai: 32, london: 12, 'new york': 15, tokyo: 18 };\n\nconst city = String(query.city || '').trim();\nif (!city) return 'Please provide a city name.';\n\nconst key = city.toLowerCase();\nlet tempC = MOCK[key];\nif (tempC === undefined) {\n  let h = 0;\n  for (const ch of key) h = (h * 31 + ch.charCodeAt(0)) % 1000;\n  tempC = 5 + (h % 30);   // 5..34 C, always the same for the same city\n}\nreturn JSON.stringify({ city, temperature_c: tempC, source: 'mock data (not real weather)' });",
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"city\": {\n      \"type\": \"string\",\n      \"description\": \"City name, e.g. Mumbai\"\n    }\n  },\n  \"required\": [\n    \"city\"\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [
+        700,
+        220
+      ],
+      "id": "8b2c1bf2-6759-47ee-9479-763edbe06dbe",
+      "name": "get_temperature"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mcp": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_temperature": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8a353fc5-b180-419a-bfe5-665e46aa8262",
+  "id": "mockTempMcp17",
+  "tags": []
+}

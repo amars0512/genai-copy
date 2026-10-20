@@ -1,6 +1,9 @@
 import asyncio
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 async def discover_tools():
     """Connect to MCP server and discover available tools"""
@@ -8,7 +11,7 @@ async def discover_tools():
     # Configure the server connection
     server_params = StdioServerParameters(
         command="python",
-        args=[r"C:\code\agenticai\6_mcp\6_0_database_mcp_server.py"],  # Replace with your server script name
+        args=[os.path.join(BASE_DIR, "6_0_database_mcp_server.py")],  # Replace with your server script name
         env=None
     )
     

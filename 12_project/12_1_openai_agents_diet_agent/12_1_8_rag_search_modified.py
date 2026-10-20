@@ -2,10 +2,13 @@ import asyncio
 from dotenv import load_dotenv
 from agents import Agent, Runner, trace, function_tool
 import chromadb
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv()
 
-DB_PATH = r"C:\code\agenticai\12_project\12_1_openai_agents_diet_agent\data\chroma"
+DB_PATH = os.path.join(BASE_DIR, "data", "chroma")
 client = chromadb.PersistentClient(path=DB_PATH)
 
 calories_db = client.get_collection("nutrition_db")

@@ -11,6 +11,8 @@ from agents import Agent, Runner, function_tool
 import chromadb
 from chromadb.utils import embedding_functions
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 # ----------------------------------------------------
 # 1. Load environment
@@ -21,7 +23,7 @@ load_dotenv(override=True)
 # ----------------------------------------------------
 # 2. Load FAQs from SQLite
 # ----------------------------------------------------
-DB_PATH = r"c://code//agenticai//2_openai_agents//faqs.db"
+DB_PATH = os.path.join(BASE_DIR, "faqs.db")
 conn = sqlite3.connect(DB_PATH)
 cursor = conn.cursor()
 
@@ -38,7 +40,7 @@ print(f"Loaded {len(knowledge_base)} FAQs from SQLite")
 # 3. Setup ChromaDB (local persistent)
 # ----------------------------------------------------
 chroma_client = chromadb.PersistentClient(
-    path=r"c:/code/agenticai/2_openai_agents/rag/chromadb"
+    path=os.path.join(BASE_DIR, "rag", "chromadb")
 )
 
 # HuggingFace embedding model

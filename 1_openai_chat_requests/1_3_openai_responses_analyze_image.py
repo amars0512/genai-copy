@@ -1,14 +1,17 @@
 # Analyze an image
 from openai import OpenAI
 from dotenv import load_dotenv
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv(override=True)
 
 client = OpenAI()
 
 file = client.files.create(
-    # file=open("C:\\code\\agenticai\\1_openai_chat_requests\\animals.pdf", "rb"),
-    file=open("C:\\code\\agenticai\\1_openai_chat_requests\\cheque.pdf", "rb"),
+    # file=open(os.path.join(BASE_DIR, "animals.pdf"), "rb"),
+    file=open(os.path.join(BASE_DIR, "cheque.pdf"), "rb"),
     purpose="user_data"
 )
 

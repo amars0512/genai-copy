@@ -2,6 +2,9 @@
 
 from langgraph.graph import StateGraph, START, END
 from typing import TypedDict
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # --- Define the state structure ---
 class InputState(TypedDict):    
@@ -46,6 +49,6 @@ if __name__ == "__main__":
     # --- Draw and save the graph image ---
     print("Generating graph image...")
     graph = app.get_graph()
-    graph_path = "c://code//agenticai//3_langgraph//greeting_graph.png"
+    graph_path = os.path.join(BASE_DIR, "greeting_graph.png")
     graph.draw_mermaid_png(output_file_path=graph_path)
     print(f"Graph image saved at: {graph_path}")

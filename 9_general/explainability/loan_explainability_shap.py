@@ -28,6 +28,9 @@ import json
 
 # Optional LLM explanation
 from dotenv import load_dotenv
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 load_dotenv(override=True)
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 use_llm = OPENAI_API_KEY is not None
@@ -46,10 +49,10 @@ logger = logging.getLogger("loan-xai")
 # ---------------------
 # Configuration
 # ---------------------
-DATA_PATH = r"c:/code/agenticai/9_general/explainability/loan_approval.csv"
-MODEL_PATH = r"c:/code/agenticai/9_general/explainability/loan_rf_model.joblib"
-PIPE_PATH = r"c:/code/agenticai/9_general/explainability/preproc_pipeline.joblib"
-SHAP_EXPLAINER_PATH = r"c:/code/agenticai/9_general/explainability/shap_explainer.joblib"
+DATA_PATH = os.path.join(BASE_DIR, "loan_approval.csv")
+MODEL_PATH = os.path.join(BASE_DIR, "loan_rf_model.joblib")
+PIPE_PATH = os.path.join(BASE_DIR, "preproc_pipeline.joblib")
+SHAP_EXPLAINER_PATH = os.path.join(BASE_DIR, "shap_explainer.joblib")
 
 # Numeric features we'll use for modeling
 NUMERIC_FEATURES = ["income", "credit_score", "loan_amount", "years_employed", "points"]
@@ -423,7 +426,7 @@ def main():
     print(report["natural_language"])
     print("\n=============================\n")
 
-    outpath = f"c://code//agenticai//9_general//explainability//explain_report_row{idx}.json"
+    outpath = os.path.join(BASE_DIR, f"explain_report_row{idx}.json")
     with open(outpath, "w") as f:
         json.dump(report, f, indent=2)
     logger.info(f"Wrote report to {outpath}")

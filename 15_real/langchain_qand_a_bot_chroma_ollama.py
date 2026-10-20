@@ -13,14 +13,17 @@ from langserve import add_routes
 from operator import itemgetter
 
 from dotenv import load_dotenv
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 load_dotenv(override=True)
 
 # 1. Configuration & Embedding Setup
 # Separate persist path from langchain_qand_a_bot_chroma.py - embeddings
 # from different models aren't compatible, so the Ollama-embedded DB can't
 # share a directory with the HuggingFace-embedded one.
-PERSIST_PATH = r"c:/code/agenticai/15_real/local_chroma_insurance_db_ollama"
-PDF_PATH = r"c:/code/agenticai/15_real/Introduction_to_Insurance.pdf"
+PERSIST_PATH = os.path.join(BASE_DIR, "local_chroma_insurance_db_ollama")
+PDF_PATH = os.path.join(BASE_DIR, "Introduction_to_Insurance.pdf")
 
 # Requires Ollama running locally with the embedding model pulled:
 #   ollama pull nomic-embed-text

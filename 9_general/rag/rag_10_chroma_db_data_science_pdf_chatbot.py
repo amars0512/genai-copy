@@ -9,6 +9,9 @@ from pypdf import PdfReader
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage
 from dotenv import load_dotenv
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv(override=True)
 
@@ -32,11 +35,11 @@ def get_text(resp):
 # INITIALIZE CHROMADB
 # Chroma will embed the text on its own using its own model
 # --------------------------------
-client = chromadb.PersistentClient(path=r"c:/code/agenticai/9_general/rag/chromadb")
+client = chromadb.PersistentClient(path=os.path.join(BASE_DIR, "chromadb"))
 
 collection = client.get_or_create_collection(name="data_science_book")
 
-PDF_PATH = r"c:/code/agenticai/9_general/rag/Principles-of-Data-Science.pdf"
+PDF_PATH = os.path.join(BASE_DIR, "Principles-of-Data-Science.pdf")
 
 CHUNK_SIZE_WORDS = 500
 CHUNK_OVERLAP_WORDS = 100

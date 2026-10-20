@@ -1,0 +1,270 @@
+{
+  "name": "18-product-order-MCP-RAG",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi! I'm the ShopEase support assistant. Ask me about an order, e.g. ORD1024.",
+        "options": {
+          "title": "ShopEase Support",
+          "subtitle": "MCP client + MCP server in one workflow"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8093f66c-b38f-4ca6-b97c-16297cece6ec",
+      "name": "When chat message received",
+      "webhookId": "278e8e96-5f34-4714-9c53-1410cd5a51da"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are ShopEase's customer-support assistant. Be friendly, short and precise.\n\nYour tools come from the ShopEase MCP server (n8n adds the prefix \"shop_\" to their names):\n- shop_get_order_status(order_id)              -> item, category, status, delivery date, days_since_delivery, package_opened, tracking\n- shop_get_customer_details(customer_or_order_id) -> name, city, loyalty tier\n- shop_check_refund_status(order_id)           -> any existing refund request and its status\nCall them with these EXACT names whenever the customer asks about a specific order, customer or refund.\n\nRefund policy:\n- Refunds can be requested within 30 days of delivery, for unused items in original packaging.\n- Electronics: only if the package is unopened. Opened electronics are covered by warranty instead.\n- Orders still 'processing' can be cancelled for a full refund; shipped orders cannot be cancelled.\n\nRules:\n- For \"is ORDxxxx eligible for a refund?\": look up the order, then answer in this format:\n    Checks:\n    - Delivered? (status = delivered)            -> yes/no\n    - Within 30 days? (days_since_delivery <= 30) -> yes/no\n    - Electronics and opened?                    -> yes/no\n    Verdict: ELIGIBLE only if delivered = yes AND within 30 days = yes AND electronics-and-opened = no; otherwise NOT ELIGIBLE.\n  Write the checks FIRST and the verdict LAST. Use days_since_delivery from the tool; never compute dates.\n- Never invent orders, dates or amounts. If a tool returns ORDER_NOT_FOUND, say so.\n- If no order ID is given, ask for it. Report statuses exactly as the tools return them.\n- Politely decline questions unrelated to ShopEase.\n",
+          "maxIterations": 10
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "8f0ade2c-df8b-418f-b3f2-32aac3de476f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "qwen3:8b",
+        "options": {
+          "temperature": 0.1,
+          "numCtx": 8192,
+          "numPredict": 1024,
+          "think": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        120,
+        220
+      ],
+      "id": "05c7e94e-4890-4403-8ebf-6e882c87a7b3",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "axE1MU3h3dvSrZWi",
+          "name": "Ollama account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 5
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        260,
+        220
+      ],
+      "id": "fd42dc60-51b6-42df-b12a-330f1a19db7f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://localhost:5678/mcp/shop-support",
+        "serverTransport": "httpStreamable",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.4,
+      "position": [
+        400,
+        220
+      ],
+      "id": "1d060d84-ee97-4276-aac0-d0c535860cee",
+      "name": "shop"
+    },
+    {
+      "parameters": {
+        "path": "shop-support"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        0
+      ],
+      "id": "0f5360bc-091e-4cc6-b3c0-745891fa3dc8",
+      "name": "MCP Server Trigger",
+      "webhookId": "2637638e-dbb8-4045-9112-e96ba8dde290"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Look up ONE order by order ID (e.g. ORD1024): item, category, status, delivery date, days_since_delivery, package_opened, courier tracking. lookup=ORDER_NOT_FOUND means it does not exist.",
+        "operation": "executeQuery",
+        "query": "SELECT q.requested AS order_id,\n       CASE WHEN o.order_id IS NULL THEN 'ORDER_NOT_FOUND' ELSE 'FOUND' END AS lookup,\n       o.item, o.category, o.amount_inr, o.status,\n       CASE WHEN o.order_id IS NULL THEN NULL WHEN o.package_opened THEN 'yes' ELSE 'no' END AS package_opened,\n       DATE_FORMAT(o.delivered_on, '%Y-%m-%d') AS delivered_on,\n       DATEDIFF(CURDATE(), o.delivered_on)     AS days_since_delivery,\n       o.courier, o.tracking_no\nFROM (SELECT UPPER(TRIM($1)) AS requested) q\nLEFT JOIN n8n.shop_orders o ON o.order_id = q.requested;",
+        "options": {
+          "queryReplacement": "={{ $fromAI('order_id', `The order ID, e.g. ORD1024`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.mySqlTool",
+      "typeVersion": 2.5,
+      "position": [
+        660,
+        220
+      ],
+      "id": "0b105b7c-542a-47b1-9a18-36aee5c3f0f3",
+      "name": "get_order_status",
+      "credentials": {
+        "mySql": {
+          "id": "ujCiIyVZA4to7uqO",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Look up a customer by customer ID (e.g. CUST01) or by one of their order IDs: name, city, loyalty tier.",
+        "operation": "executeQuery",
+        "query": "SELECT q.requested AS looked_up_by,\n       CASE WHEN c.customer_id IS NULL THEN 'CUSTOMER_NOT_FOUND' ELSE 'FOUND' END AS lookup,\n       c.customer_id, c.name, c.city, c.loyalty_tier\nFROM (SELECT UPPER(TRIM($1)) AS requested) q\nLEFT JOIN n8n.shop_customers c\n       ON c.customer_id = q.requested\n       OR c.customer_id = (SELECT customer_id FROM n8n.shop_orders WHERE order_id = q.requested);",
+        "options": {
+          "queryReplacement": "={{ $fromAI('customer_or_order_id', `A customer ID like CUST01 or an order ID like ORD1024`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.mySqlTool",
+      "typeVersion": 2.5,
+      "position": [
+        820,
+        220
+      ],
+      "id": "674103de-8e8f-4af5-85e9-9bc70d4723ec",
+      "name": "get_customer_details",
+      "credentials": {
+        "mySql": {
+          "id": "ujCiIyVZA4to7uqO",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Check whether a refund was requested for an order ID and its status (requested/approved/rejected/paid). lookup=NO_REFUND_REQUESTED means none exists.",
+        "operation": "executeQuery",
+        "query": "SELECT q.requested AS order_id,\n       CASE WHEN o.order_id IS NULL THEN 'ORDER_NOT_FOUND'\n            WHEN r.refund_id IS NULL THEN 'NO_REFUND_REQUESTED'\n            ELSE 'REFUND_FOUND' END AS lookup,\n       r.refund_id, r.reason, r.status AS refund_status, r.amount_inr\nFROM (SELECT UPPER(TRIM($1)) AS requested) q\nLEFT JOIN n8n.shop_orders o  ON o.order_id = q.requested\nLEFT JOIN n8n.shop_refunds r ON r.order_id = q.requested;",
+        "options": {
+          "queryReplacement": "={{ $fromAI('order_id', `The order ID, e.g. ORD1027`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.mySqlTool",
+      "typeVersion": 2.5,
+      "position": [
+        980,
+        220
+      ],
+      "id": "f5a2f345-58ed-4cc0-bd65-6f66b03144c1",
+      "name": "check_refund_status",
+      "credentials": {
+        "mySql": {
+          "id": "ujCiIyVZA4to7uqO",
+          "name": "MySQL account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "shop": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_order_status": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_customer_details": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check_refund_status": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f6d08b6d-2d0b-4ae5-8008-ca8b32f4b399",
+  "id": "xUggnjud6YARqKF0",
+  "tags": []
+}

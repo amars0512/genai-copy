@@ -1,7 +1,10 @@
 import chromadb
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Create (or open) a persistent ChromaDB database
-client = chromadb.PersistentClient(path=r"c:/code/agenticai/14_advanced/04_rag/chroma_db")
+client = chromadb.PersistentClient(path=os.path.join(BASE_DIR, "chroma_db"))
 collection = client.get_or_create_collection("articles")
 
 # Clear any existing data (optional)

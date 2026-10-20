@@ -3,6 +3,8 @@ import os
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Load Smithery API key securely from .env or environment variable
 from dotenv import load_dotenv
 load_dotenv(override=True)
@@ -25,7 +27,7 @@ async def main():
         ],
     )
 
-    file_path = r"C:\agenticainew\2_Openai_agents\2_2_openai_agent_tool_hardcoded_knowledge.py"
+    file_path = os.path.join(BASE_DIR, "..", "2_openai_agents", "2_2_openai_agent_tool_hardcoded_knowledge.py")
     repo_name = "agenticainew"
     owner = "newdelthis"
     branch = "main"

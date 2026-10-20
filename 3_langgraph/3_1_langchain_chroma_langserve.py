@@ -14,11 +14,14 @@ from langserve import add_routes
 from operator import itemgetter
 
 from dotenv import load_dotenv
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 load_dotenv(override=True)
 
 # 1. Configuration & Embedding Setup
-PERSIST_PATH = r"c:/code/agenticai/3_langgraph/local_chroma_insurance_db"
-PDF_PATH = r"c:/code/agenticai/2_openai_agents/Introduction_to_Insurance.pdf"
+PERSIST_PATH = os.path.join(BASE_DIR, "local_chroma_insurance_db")
+PDF_PATH = os.path.join(BASE_DIR, "..", "2_openai_agents", "Introduction_to_Insurance.pdf")
 
 embeddings = HuggingFaceEmbeddings(
     model_name="sentence-transformers/all-MiniLM-L6-v2",

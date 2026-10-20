@@ -2,11 +2,14 @@
 import asyncio
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 async def main():
     server_params = StdioServerParameters(
         command="python",
-        args=["c:/code/agenticai/6_mcp/6_20_gutenberg_mcp_server.py"]
+        args=[os.path.join(BASE_DIR, "6_20_gutenberg_mcp_server.py")]
     )
 
     async with stdio_client(server_params) as (read, write):

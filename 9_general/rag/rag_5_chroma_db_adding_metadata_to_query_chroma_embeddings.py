@@ -1,7 +1,10 @@
 import chromadb
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Initialize Chroma with persistence
-client = chromadb.PersistentClient(path=r"c:/code/agenticai/9_general/rag/chromadb")
+client = chromadb.PersistentClient(path=os.path.join(BASE_DIR, "chromadb"))
 
 # Create / load collection with embedding function
 collection = client.get_or_create_collection(
