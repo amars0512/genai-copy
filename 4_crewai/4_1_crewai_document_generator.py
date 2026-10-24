@@ -23,7 +23,7 @@ writer = Agent(
     verbose=True
 )
 
-# 2. Define Tasks
+# 2. Define Tasks and test
 research_task = Task(
     description="Research {technology} and gather information about:\n"
                 "- What it is and main purpose\n"
